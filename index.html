@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hangman Game</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --primary-color: #6C63FF;
+      --secondary-color: #FF6584;
+      --success-color: #48C774;
+      --danger-color: #F14668;
+      --warning-color: #FFDD57;
+      --dark-color: #363636;
+      --light-color: #F5F5F5;
+      --border-radius: 8px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background-color: #F0F2F5;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .game-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .game-title {
+      font-size: 3rem;
+      color: var(--primary-color);
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .game-subtitle {
+      font-size: 1.2rem;
+      color: var(--dark-color);
+      opacity: 0.8;
+    }
+
+    .game-container {
+      background-color: white;
+      border-radius: var(--border-radius);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      margin-bottom: 20px;
+    }
+
+    .game-status {
+      display: flex;
+      gap: 40px;
+      margin-bottom: 30px;
+    }
+
+    .hangman-display {
+      flex: 1;
+      text-align: center;
+    }
+
+    .hangman-img {
+      display: block;
+      width: 200px;
+      height: 220px;
+      margin: 0 auto;
+      background-color: #F5F5F5;
+      border-radius: var(--border-radius);
+      padding: 10px;
+    }
+
+    .game-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .attempts-box, .guessed-letters {
+      background-color: var(--light-color);
+      border-radius: var(--border-radius);
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+
+    .attempts-title, .guessed-title {
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+      color: var(--dark-color);
+    }
+
+    .attempts-counter {
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    .attempts-max {
+      font-size: 1.2rem;
+      color: var(--dark-color);
+      opacity: 0.7;
+    }
+
+    .letters-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .letter {
+      display: inline-block;
+      width: 36px;
+      height: 36px;
+      line-height: 36px;
+      text-align: center;
+      border-radius: 50%;
+      font-weight: 600;
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .letter.correct {
+      background-color: var(--success-color);
+    }
+
+    .letter.incorrect {
+      background-color: var(--danger-color);
+    }
+
+    .word-display {
+      margin: 0 auto 30px;
+      text-align: center;
+    }
+
+    .word-container {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .letter-box {
+      width: 50px;
+      height: 50px;
+      border-bottom: 3px solid var(--dark-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .letter-box.filled {
+      color: var(--primary-color);
+    }
+
+    .keyboard {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .keyboard-row {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .key {
+      width: 45px;
+      height: 45px;
+      border-radius: var(--border-radius);
+      background-color: white;
+      border: 2px solid var(--primary-color);
+      color: var(--primary-color);
+      font-size: 1.2rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+    }
+
+    .key:hover {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .key.used {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .key.correct {
+      background-color: var(--success-color);
+      border-color: var(--success-color);
+      color: white;
+    }
+
+    .key.incorrect {
+      background-color: var(--danger-color);
+      border-color: var(--danger-color);
+      color: white;
+    }
+
+    .message-box {
+      padding: 20px;
+      border-radius: var(--border-radius);
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .message-box.success {
+      background-color: var(--success-color);
+      color: white;
+    }
+
+    .message-box.error {
+      background-color: var(--danger-color);
+      color: white;
+    }
+
+    .button-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .btn {
+      padding: 12px 30px;
+      border-radius: var(--border-radius);
+      border: none;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: #5751d9;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    footer {
+      text-align: center;
+      margin-top: auto;
+      padding: 20px 0;
+      color: var(--dark-color);
+      opacity: 0.7;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      .game-status {
+        flex-direction: column;
+      }
+
+      .letter-box {
+        width: 40px;
+        height: 40px;
+        font-size: 1.5rem;
+      }
+
+      .key {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="game-header">
+      <h1 class="game-title">Hangman</h1>
+      <p class="game-subtitle">Guess the word before it's too late!</p>
+    </header>
+
+    <main class="game-container">
+      <div class="game-status">
+        <div class="hangman-display">
+          <svg class="hangman-img hangman-{{ hangman_state }}" viewBox="0 0 200 220">
+            <line x1="40" y1="200" x2="160" y2="200" stroke="black" stroke-width="5"/>
+            <line x1="60" y1="20" x2="60" y2="200" stroke="black" stroke-width="5"/>
+            <line x1="60" y1="20" x2="140" y2="20" stroke="black" stroke-width="5"/>
+            <line x1="140" y1="20" x2="140" y2="40" stroke="black" stroke-width="5"/>
+            {% if hangman_state >= 1 %}
+            <circle cx="140" cy="60" r="20" stroke="black" stroke-width="5" fill="none"/>
+            {% endif %}
+            {% if hangman_state >= 2 %}
+            <line x1="140" y1="80" x2="140" y2="140" stroke="black" stroke-width="5"/>
+            {% endif %}
+            {% if hangman_state >= 3 %}
+            <line x1="140" y1="90" x2="120" y2="120" stroke="black" stroke-width="5"/>
+            {% endif %}
+            {% if hangman_state >= 4 %}
+            <line x1="140" y1="90" x2="160" y2="120" stroke="black" stroke-width="5"/>
+            {% endif %}
+            {% if hangman_state >= 5 %}
+            <line x1="140" y1="140" x2="120" y2="180" stroke="black" stroke-width="5"/>
+            {% endif %}
+            {% if hangman_state >= 6 %}
+            <line x1="140" y1="140" x2="160" y2="180" stroke="black" stroke-width="5"/>
+            {% endif %}
+          </svg>
+        </div>
+
+        <div class="game-info">
+          <div class="attempts-box">
+            <h3 class="attempts-title">Attempts Left</h3>
+            <span class="attempts-counter">{{ attempts_left }}</span>
+            <span class="attempts-max">/ {{ max_attempts }}</span>
+          </div>
+          <div class="guessed-letters">
+            <h3 class="guessed-title">Guessed Letters</h3>
+            <div class="letters-container">
+              {% for letter in guessed_letters %}
+              <span class="letter {% if letter in correct_letters %}correct{% else %}incorrect{% endif %}">
+                {{ letter }}
+              </span>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="word-display">
+        <div class="word-container">
+          {% for letter in display_word %}
+          <div class="letter-box {% if letter %}filled{% endif %}">{{ letter }}</div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <form class="keyboard" method="post" action="/guess">
+        {% set rows = [['q','w','e','r','t','y','u','i','o','p'],
+                       ['a','s','d','f','g','h','j','k','l'],
+                       ['z','x','c','v','b','n','m']] %}
+        {% for row in rows %}
+        <div class="keyboard-row">
+          {% for key in row %}
+          <button type="submit" name="letter" value="{{ key }}"
+            class="key {% if key in guessed_letters %}used {% if key in correct_letters %}correct{% else %}incorrect{% endif %}{% endif %}">
+            {{ key }}
+          </button>
+          {% endfor %}
+        </div>
+        {% endfor %}
+      </form>
+
+      {% if game_over %}
+      <div class="message-box {% if won %}success{% else %}error{% endif %}">
+        <h2>{% if won %}🎉 Congratulations! You won!{% else %}💀 Game Over!{% endif %}</h2>
+        <p>The word was "{{ word }}"</p>
+      </div>
+      {% endif %}
+
+      <div class="button-container">
+        <form method="post" action="/new-game">
+          <button type="submit" class="btn btn-primary">New Game</button>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <footer>
+    <p>Hangman-Game &copy; 2025 | Created by Arko with Flask & Python</p>
+  </footer>
+</body>
+</html>
+
