@@ -3,9 +3,13 @@ Hangman GameWelcome to the Hangman Game! This is a classic word-guessing game bu
 🎮 Game OverviewThe objective of Hangman is to guess a word chosen by the computer. You are given a certain number of attempts (in this game, 6 attempts). For each incorrect letter you guess, a part of the hangman figure is drawn. If the hangman figure is completed before you guess the word, you lose. If you guess all the letters in the word, you win!Features:Interactive Gameplay: Guess letters using an on-screen keyboard.Visual Feedback: The hangman drawing progresses with each incorrect guess.Attempt Tracker: Clearly displays the number of attempts remaining.Guessed Letters: Shows which letters you've already tried, categorized as correct or incorrect.Responsive Design: Playable on various screen sizes (desktop, tablet, mobile).New Game Option: Easily start a new game at any time.
 
 📁 Project StructureThe project is organized into the following main files:
+
 ├── app.py
+
 ├── index.html
+
 ├── requirements.txt
+
 └── README.md
 
 app.py: This is the core Python Flask application file. It handles all the game logic, including word selection, managing game state (guessed letters, attempts left, win/loss conditions), and routing HTTP requests.index.html: This file contains the HTML structure and CSS styling for the game's user interface. It defines how the game looks, including the hangman drawing, word display, keyboard, and status messages.requirements.txt: This file lists all the Python dependencies required to run the Flask application. It's used to set up the correct environment.README.md: This file (the one you're reading!) provides an overview of the project, game instructions, setup guide, and file structure.
